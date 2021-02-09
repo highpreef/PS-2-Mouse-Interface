@@ -18,8 +18,7 @@
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments: Design freedom is constrained given the specific skeleton 
-//                      provided 
+// Additional Comments: Design freedom is contrained in this module.
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -38,6 +37,7 @@ module MouseTransceiver(
     //output reg [7:0] MouseY,
     output reg [7:0] MouseScroll,
     
+    // Seg7 Display
     output [3:0] SEG_SELECT,
     output [7:0] LED_OUT
     );

@@ -1,22 +1,23 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: The University of Edinburgh
+// Engineer: David Jorge
 // 
 // Create Date: 15.01.2021 18:44:54
-// Design Name: 
+// Design Name: Mouse Interface
 // Module Name: MouseReceiver
-// Project Name: 
-// Target Devices: 
+// Project Name: Digital Systems Laboratory
+// Target Devices: Basys 3
 // Tool Versions: 
-// Description: 
+// Description: Receiver Module. Handles the Mouse to Host communication following
+//              the PS/2 protocol.
 // 
 // Dependencies: 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Additional Comments: Can't really add additional functionality to this module
+//                      as design freedom is very contrained.
 //////////////////////////////////////////////////////////////////////////////////
 
 

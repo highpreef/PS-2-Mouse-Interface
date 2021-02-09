@@ -9,14 +9,18 @@
 // Project Name: Digital Systems Laboratory
 // Target Devices: Basys 3
 // Tool Versions: 
-// Description: 
+// Description: Transmitter module. Handles Host to Mouse communication following the
+//              PS/2 protocol.
 // 
 // Dependencies: 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments: Design freedom is constrained given the specific skeleton 
-//                      provided 
+// Additional Comments: Can't really add additional functionality to this module
+//                      as design freedom is very contrained. Added the sending of
+//                      the stop bit (After a lot of pain and debugging), which 
+//                      was not present in the original source code. Please fix 
+//                      your source code......
 //////////////////////////////////////////////////////////////////////////////////
 
 

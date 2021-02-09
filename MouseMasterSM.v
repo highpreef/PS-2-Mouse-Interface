@@ -9,14 +9,17 @@
 // Project Name: Digital Systems Laboratory
 // Target Devices: Basys 3
 // Tool Versions: 
-// Description: 
+// Description: Master State Machine module that handles the PS/2 protocol by
+//              controlling the reciever and transmitter modules. Added Scroll wheel
+//              functionality.
 // 
 // Dependencies: 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Additional Comments: Here I it was possible to have a lot of design freedom.
+//                      Added the additional functionality to detect scroll wheel
+//                      movement.
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -38,6 +41,11 @@ module MouseMasterSM(
     output [7:0] MOUSE_DSCROLL,
     output [7:0] MOUSE_STATUS,
     output SEND_INTERRUPT
+    
+    /*
+    //ILA Debugger
+    output [3:0] MasterStateCode
+    */
     );
     
     //////////////////////////////////////////////////////////////
@@ -50,13 +58,28 @@ module MouseMasterSM(
     // 4) Send F4 -- Start transmitting command,
     // 5) Read FA -- Mouse Acknowledge,
     //
+    // Scroll Wheel
+    // 6) Send F3 -- Request sample rate change
+    // 7) Send C8 -- Set sample rate 200
+    // 8) Read FA -- Mouse Acknowledge
+    // 9) Send F3 -- Request sample rate change
+    // 10) Send 64 -- Set sample rate to 100
+    // 8) Read FA -- Mouse Acknowledge
+    // 9) Send F3 -- Request sample rate change
+    // 10) Send 50 -- Set sample rate to 80
+    // 11) Read FA -- Mouse Acknowledge
+    // 12) Send F2 -- Request Mouse ID
+    // 13) IF Read 03 -- Mouse has a functioning scroll wheel
+    //     ELSE IF Read 00 -- Mouse does not have a functioning scroll wheel
+    //
     // If at any time this chain is broken, the SM will restart from
     // the beginning. Once it has finished the set-up sequence, the read enable flag
     // is raised.
     // The host is then ready to read mouse information 3 bytes at a time:
     // S1) Wait for first read, When it arrives, save it to Status. Goto S2.
     // S2) Wait for second read, When it arrives, save it to DX. Goto S3.
-    // S3) Wait for third read, When it arrives, save it to DY. Goto S1.
+    // S3) Wait for third read, When it arrives, save it to DY. If mouse has a scroll wheel Goto S4, else Goto S1.
+    // S4) Wait for fourth read, When it arrives save it to DScroll. Goto S1
     // Send interrupt.
     
     //State Control
@@ -197,7 +220,6 @@ module MouseMasterSM(
             //Wait for confirmation of a byte being received
             // CHANGED THE EXPECTED BYTE TO FA AS THIS IS WHAT IS RECEIVED
             //If the byte is FA goto next state, else re-initialise
-            // MAYBE ALSO ADD CHECK FOR RECEIVED BYTE ERROR
             8: begin
                 if(BYTE_READY) begin
                     if((BYTE_READ == 8'hFA) & (BYTE_ERROR_CODE == 2'b00))
@@ -350,7 +372,7 @@ module MouseMasterSM(
             end
                                     
             // Send the third and final of 3 sample rate changes: 
-            // Set sample rate 80 (80 is 64 in hex)
+            // Set sample rate 80 (80 is 50 in hex)
             24: begin
                 Next_State = 25;
                 Next_SendByte = 1'b1;
@@ -379,8 +401,7 @@ module MouseMasterSM(
                     
             // Now the host needs to send the 'Get device ID' (0xF2) byte
             // and waits for a response. If mouse responds with '0x00' it
-            // means it's a non-intellimouse mouse. If it responds with '0x03'
-            // it means it's a microsoft intellimouse 
+            // means it has a functioning scroll wheel. Otherwise it responds with '0x03'
             27: begin
                 Next_State = 28;
                 Next_SendByte = 1'b1;
@@ -407,6 +428,11 @@ module MouseMasterSM(
                 Next_ReadEnable = 1'b1;
             end
             
+            // The mouse can respond in 2 ways. By sending the 0x03 byte, meaning that
+            // it has a functioning scroll wheel, or the 0x00 byte, meaning it does not
+            // have a functioning scroll wheel. If it sends 0x03, instead of the usual 3
+            // information bytes, it will send an additional 4th byte with the scroll wheel
+            // information. Otherwise it will stick to the usual 3 information bytes.
             30: begin
                 if(BYTE_READY) begin
                     if((BYTE_READ == 8'h03) & (BYTE_ERROR_CODE == 2'b00)) begin
@@ -432,25 +458,6 @@ module MouseMasterSM(
             //Wait for the confirmation of a byte being received.
             //This byte will be the first of three, the status byte.
             //If a byte arrives, but is corrupted, then we re-initialise
-            
-            /*
-            4'h9: begin
-                if(BYTE_READY) begin
-                    if(BYTE_ERROR_CODE == 2'b00) begin
-                        Next_State = 4'hA;
-                        Next_Status = BYTE_READ;
-                    end else
-                        Next_State = 4'h0;
-                end
-                
-                //Next_Counter = 0;
-                Next_ReadEnable = 1'b1;
-            end
-            */
-            
-            //Wait for the confirmation of a byte being received.
-            //This byte will be the first of three, the status byte.
-            //If a byte arrives, but is corrupted, then we re-initialise
             31: begin
                 if(BYTE_READY) begin
                     if(BYTE_ERROR_CODE == 2'b00) begin
@@ -460,6 +467,7 @@ module MouseMasterSM(
                         Next_State = 0;
                 end
                 
+                Next_Counter = 0;
                 Next_ReadEnable = 1'b1;
             end
             
@@ -519,13 +527,13 @@ module MouseMasterSM(
             
             //Send Interrupt State
             35: begin
-                Next_State = 8'h31;
+                Next_State = 31;
                 Next_SendInterrupt = 1'b1;
             end
             
             //Default State
             default: begin
-                Next_State = 4'h0;
+                Next_State = 8'h0;
                 Next_Counter = 0;
                 Next_SendByte = 1'b0;
                 Next_ByteToSend = 8'hFF;
@@ -557,5 +565,9 @@ module MouseMasterSM(
     assign MOUSE_STATUS = Curr_Status;
     assign SEND_INTERRUPT = Curr_SendInterrupt;
     
+    /*
+    //ILA Debugger
+    assign MasterStateCode = Curr_State;
+    */
     
 endmodule
