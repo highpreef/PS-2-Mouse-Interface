@@ -1,21 +1,21 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: The University of Edinburgh
+// Engineer: David Jorge
 // 
 // Create Date: 20.01.2021 13:19:45
-// Design Name: 
+// Design Name: Mouse Interface
 // Module Name: Generic_counter
-// Project Name: 
-// Target Devices: 
+// Project Name: Digital Systems Laboratory
+// Target Devices: Basys 3
 // Tool Versions: 
-// Description: 
+// Description: This module functions as a counter with a trigger and count output.
 // 
 // Dependencies: 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
+// Additional Comments: Reused code from last year's lab.
 // 
 //////////////////////////////////////////////////////////////////////////////////
 

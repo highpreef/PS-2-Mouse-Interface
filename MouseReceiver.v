@@ -123,11 +123,8 @@ module MouseReceiver(
         State 3'b100, as well as default State
         */
         /*
-        ………………
         FILL IN THIS AREA
-        ………………
         */
-        
         //Detect Stop bit
         3'b011: begin
             //Falling edge of Mouse clock and MouseData is Stop bit

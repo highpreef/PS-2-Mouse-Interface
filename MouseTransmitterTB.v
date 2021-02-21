@@ -1,27 +1,31 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: The University of Edinburgh
+// Engineer: David Jorge
 // 
 // Create Date: 02.02.2021 12:33:41
-// Design Name: 
+// Design Name: Mouse Interface
 // Module Name: MouseTransmitterTB
-// Project Name: 
-// Target Devices: 
+// Project Name: Digital Systems Laboratory
+// Target Devices: Basys 3
 // Tool Versions: 
-// Description: 
+// Description: This is the testbench for the transmitter module. It tests if the 
+//              module can successfully send a specified byte while adhering to the 
+//              timing and requirements set by the Host to Mouse communication
+//              of the PS/2 protocol
 // 
 // Dependencies: 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
+// Additional Comments: This module is simple enough to make a testbench on. The
+//                      Transceiver and MSM module are very complex and thus the
+//                      ILA debugger was mostly used for testing them.
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
 
 module MouseTransmitterTB(
-
     );
     
     // Inputs
@@ -54,9 +58,14 @@ module MouseTransmitterTB(
     
     always
         #10 CLK = !CLK;
+        
+    initial begin
+        $monitor("Time = %d \t BYTE_SENT = %b \t SEND_BYTE = %b \t BYTE_TO_SEND = %b \t DATA_MOUSE_OUT = %b",$time, BYTE_SENT, SEND_BYTE, BYTE_TO_SEND, DATA_MOUSE_OUT);
+    end
     
     initial begin 
         // Initialize inputs
+        #100; // global reset
         RESET = 0;
         CLK = 0;
         CLK_MOUSE_IN = 1;
@@ -64,86 +73,87 @@ module MouseTransmitterTB(
         SEND_BYTE = 0;
         BYTE_TO_SEND = 0;
         
-        $display("Begin Testbench");
+        $display("Begin");
         
         // Wait 100ns for global reset to finish
         SEND_BYTE = 1;
-        BYTE_TO_SEND = 8'hF4;
+        BYTE_TO_SEND = 8'hFA;
+        $display("Byte to send: %h", BYTE_TO_SEND);
         
-        // Simulate Clock Mouse
+        // Simulate Mouse Clock
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 0;
-        #40000;
+        #30000;
         CLK_MOUSE_IN = 1;
-        #40000;
+        #30000;
         
-        #890000
+        #30000;
         DATA_MOUSE_IN = 0;
         $display("Bring Data Low: DATA_MOUSE_IN = %b", DATA_MOUSE_IN);
-        #20000
+        #10000;
         CLK_MOUSE_IN = 0;
         $display("Bring Clock Low: CLK_MOUSE_IN = %b", CLK_MOUSE_IN);
-        #40000
+        #30000;
         CLK_MOUSE_IN = 1;
         $display("Release Clock Line: CLK_MOUSE_IN = %b", CLK_MOUSE_IN);
-        #20000
+        #10000;
         DATA_MOUSE_IN = 1;
         $display("Release Data Line: DATA_MOUSE_IN = %b", DATA_MOUSE_IN);
         
-        #50000;
+        //Display current BYTE_SENT
+        #20;
+        $display("Byte Sent = %b", BYTE_SENT);
         
-        $display("End Testbench");
-    end
-    
-    initial begin
-        $monitor("%d,\tBYTE_TO_SEND: %b,\tDATA_MOUSE_OUT: %b,\tDATA_MOUSE_OUT_EN: %b,\tBYTE_SENT: %b",$time, BYTE_TO_SEND, DATA_MOUSE_OUT, DATA_MOUSE_OUT_EN, BYTE_SENT);
+        #60000;
+        
+        $display("End");
     end
     
 endmodule

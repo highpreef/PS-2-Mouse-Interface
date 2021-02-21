@@ -33,21 +33,19 @@ module MouseTransceiver(
     // Added reg declaration for MouseStatus, MouseX and MouseY as it is necessary to do
     // non-blocking assignments
     output reg [3:0] MouseStatus,
-    //output reg [7:0] MouseX,
-    //output reg [7:0] MouseY,
+    output reg [7:0] MouseX,
+    output reg [7:0] MouseY,
     output reg [7:0] MouseScroll,
     
     // Seg7 Display
     output [3:0] SEG_SELECT,
     output [7:0] LED_OUT
     );
-    reg [7:0] MouseX;
-    reg [7:0] MouseY;
         
     // X, Y Limits of Mouse Position e.g. VGA Screen with 160 x 120 resolution
     parameter [7:0] MouseLimitX = 160;
     parameter [7:0] MouseLimitY = 120;
-    // MouseScroll value can be any 8bit binary number
+    // MouseScroll limit was set to 255 to fit in a byte
     parameter [7:0] MouseLimitScroll = 255;
     
     /////////////////////////////////////////////////////////////////////
@@ -228,9 +226,7 @@ module MouseTransceiver(
     
     // assign the proper expression to MouseDy
     /*
-     ………………
      FILL IN THIS AREA
-     ………………
     */
     /*
         if Movement Overflow bit is 1 {
@@ -247,13 +243,15 @@ module MouseTransceiver(
     assign MouseDy = (MouseStatusRaw[7]) ? (MouseStatusRaw[5] ? {MouseStatusRaw[5],8'h00} :
     {MouseStatusRaw[5],8'hFF} ) : {MouseStatusRaw[5],MouseDyRaw[7:0]};
     
-    // Assign proper expression to MouseDScroll. Since the mouse scroll data only changes the 4 least significant bits,
+    // Assign proper expression to MouseDScroll.
+    // Since the mouse scroll data only changes the 4 least significant bits,
     // sign extension can be safely used.
-    assign MouseDScroll = {MouseDScrollRaw[7], MouseDScrollRaw[7:0]};
+    assign MouseDScroll = {MouseDScrollRaw[3], MouseDScrollRaw[7:0]};
     
     // calculate new mouse position
     assign MouseNewX = {1'b0,MouseX} + MouseDx;
     assign MouseNewY = {1'b0,MouseY} + MouseDy;
+    // calculate new scroll wheel value
     assign MouseNewScroll = {1'b0,MouseScroll} + MouseDScroll;
     
     always@(posedge CLK) begin
@@ -276,9 +274,7 @@ module MouseTransceiver(
             
             //Y is modified based on DY with limits on max and min
             /*
-            ………………
             FILL IN THIS AREA
-            ………………
             */
             // If new Mouse Position is less than 0
             if(MouseNewY < 0)

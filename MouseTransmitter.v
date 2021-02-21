@@ -18,9 +18,9 @@
 // Revision 0.01 - File Created
 // Additional Comments: Can't really add additional functionality to this module
 //                      as design freedom is very contrained. Added the sending of
-//                      the stop bit (After a lot of pain and debugging), which 
-//                      was not present in the original source code. Please fix 
-//                      your source code......
+//                      the stop bit (After a lot of pain and debugging) as per the
+//                      ps/2 protocol, which was not present in the original source
+//                      code. Please fix your source code......             
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -163,9 +163,7 @@ module MouseTransmitter(
             Device to release both Data and Clock.
             */
             /*
-            ………………
             FILL IN THIS AREA
-            ………………
             */
             //Wait for device to bring Data line low
             4'h8: begin

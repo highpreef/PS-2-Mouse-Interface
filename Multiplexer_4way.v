@@ -1,21 +1,21 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: The University of Edinburgh
+// Engineer: David Jorge
 // 
 // Create Date: 20.01.2021 13:16:30
-// Design Name: 
+// Design Name: Mouse Interface
 // Module Name: Multiplexer_4way
-// Project Name: 
-// Target Devices: 
+// Project Name: Digital Systems Laboratory
+// Target Devices: Basys 3
 // Tool Versions: 
-// Description: 
+// Description: This module acts as a 4 input multiplexer.
 // 
 // Dependencies: 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
+// Additional Comments: Reused code from last year's lab.
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
